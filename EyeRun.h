@@ -340,8 +340,25 @@ namespace EyeRun {
     class Disassembler {
     public:
         explicit Disassembler(ProcessInfo* proc_info, const DisassemblerConfig& config = {});
+        struct DecodingContext;
 
         Instruction disassemble(uintptr_t address);
+        void decode_modrm_operands(DecodingContext& ctx, Instruction& inst);
+        void decode_rel8(DecodingContext& ctx, Instruction& inst);
+        void decode_rel32(DecodingContext& ctx, Instruction& inst);
+        void decode_imm8(DecodingContext& ctx, Instruction& inst);
+        void decode_imm16(DecodingContext& ctx, Instruction& inst);
+        void decode_imm32(DecodingContext& ctx, Instruction& inst);
+        void decode_register_in_opcode(DecodingContext& ctx, Instruction& inst, uint8_t reg);
+        void decode_al_imm8(DecodingContext& ctx, Instruction& inst);
+        void decode_ax_imm(DecodingContext& ctx, Instruction& inst);
+        void decode_mov_reg_imm8(DecodingContext& ctx, Instruction& inst, uint8_t reg);
+        void decode_mov_reg_imm(DecodingContext& ctx, Instruction& inst, uint8_t reg);
+        void decode_mov_rm_imm(DecodingContext& ctx, Instruction& inst);
+        void decode_group1(DecodingContext& ctx, Instruction& inst);
+        void decode_group3(DecodingContext& ctx, Instruction& inst);
+        void decode_group4(DecodingContext& ctx, Instruction& inst);
+        void decode_group5(DecodingContext& ctx, Instruction& inst);
 
         std::vector<Instruction> disassemble_range(uintptr_t start, uintptr_t end);
         std::vector<Instruction> disassemble_count(uintptr_t start, size_t count);
@@ -374,7 +391,6 @@ namespace EyeRun {
         Register decode_register_operand(uint8_t reg, uint8_t size, bool rex_ext);
 
         void handle_rip_relative(DecodingContext& ctx, Instruction& inst);
-        std::string get_register_name(Register reg) const;
     };
 
     struct PatternConfig {
